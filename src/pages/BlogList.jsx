@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Assuming axios is used for API calls
-import Swal from "sweetalert2"; // Import SweetAlert2
+import axios from "axios";
+import Swal from "sweetalert2";
 import Sidebar from "../components/Sidebar";
 import Headers from "../components/Header";
-import { FaEdit, FaTrash, FaThumbsUp } from "react-icons/fa"; // FontAwesome Icons for like
+import { FaEdit, FaTrash, FaThumbsUp } from "react-icons/fa";
 import Loader from "../components/Loader";
 
 const BlogList = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;  
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const BlogList = () => {
       const token = localStorage.getItem("userToken");
       const response = await axios.get(`${BASE_URL}/blog`, {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       setBlogPosts(response.data);
@@ -35,7 +35,7 @@ const BlogList = () => {
   }, []);
 
   const handleEdit = (post) => {
-    navigate(`/blog/edit/${post._id}`, { state: { post } }); // Pass the entire post object
+    navigate(`/blog/edit/${post._id}`, { state: { post } });
   };
 
   const handleDelete = async (id) => {
@@ -54,19 +54,17 @@ const BlogList = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("userToken");
-
       const response = await axios.delete(`${BASE_URL}/blog`, {
         data: { id },
         headers: {
-          'Authorization': `Bearer ${token}`,  // Add the Authorization header
-          'Content-Type': 'application/json', // Set Content-Type header to JSON
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-    
       });
 
       if (response.status === 200) {
         Swal.fire("Deleted!", "Your blog post has been deleted.", "success");
-        fetchBlogPosts(); // Refresh the list after deletion
+        fetchBlogPosts();
       } else {
         Swal.fire("Failed!", "There was a problem deleting the blog post.", "error");
       }
@@ -86,14 +84,14 @@ const BlogList = () => {
         {},
         {
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       if (response.status === 200) {
         Swal.fire("Liked!", "You liked this blog post.", "success");
-        fetchBlogPosts(); // Refresh the list after liking
+        fetchBlogPosts();
       } else {
         Swal.fire("Failed!", "There was a problem liking the blog post.", "error");
       }
@@ -103,6 +101,9 @@ const BlogList = () => {
     }
   };
 
+  // Exclude top 4 blog posts
+  const filteredBlogPosts = blogPosts.slice(4);
+
   return (
     <>
       <Headers />
@@ -111,20 +112,19 @@ const BlogList = () => {
         <div className="flex-1 p-8 bg-gray-50 min-h-screen">
           <h1 className="text-4xl font-bold text-center mb-8 text-indigo-700">All Blog Posts</h1>
           {loading ? (
-           <Loader/>
+            <Loader />
           ) : (
             <div className="space-y-6">
-              {blogPosts.map((post) => (
+              {filteredBlogPosts.map((post) => (
                 <div
                   key={post._id}
                   className="bg-white p-6 rounded-lg shadow-md flex justify-between items-center"
                 >
-                  {/* <img
+                {/*<img
       src={`https://blogapitaskindrajala.onrender.com/${post.image}`} // External or local URL
       alt={post.title}
       className="w-full h-64 object-cover rounded-md" // Styling the image
-    /> */}
-
+    />*/}
                   <div>
                     <h2 className="text-2xl font-bold text-indigo-600">{post.title}</h2>
                     <p className="text-gray-600 mt-2">{post.description}</p>
